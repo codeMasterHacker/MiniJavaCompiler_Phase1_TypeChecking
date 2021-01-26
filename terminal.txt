@@ -1,0 +1,3 @@
+javac TypeChecker.java
+java TypeChecker < /Users/Enrique/Desktop/JavaParser/phase1-tests/Basic.java
+find /Users/Enrique/Desktop/JavaParser -type f -name "*.class" -delete
