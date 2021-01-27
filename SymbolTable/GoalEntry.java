@@ -28,10 +28,10 @@ public class GoalEntry extends SymbolTableEntry
         System.out.println("\n\n\nClasses:");
         classes.forEach( (key, value) -> 
         {
-            if (value.parent_className.isEmpty())
+            if (value.parentClass_name.isEmpty())
                 System.out.println("\t" + key);
             else
-                System.out.println("\t" + key + " extends " + value.parent_className);
+                System.out.println("\t" + key + " extends " + value.parentClass_name);
             value.print();
         });
     }

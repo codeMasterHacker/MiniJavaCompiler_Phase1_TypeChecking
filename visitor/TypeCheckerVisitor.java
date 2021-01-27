@@ -3,6 +3,8 @@ import SymbolTable.*;
 import syntaxtree.*;
 import java.util.*;
 
+//TODO find all instances of "equals"
+
 public class TypeCheckerVisitor implements GJVisitor<String, SymbolTableEntry> 
 {
     SymbolTableEntry currentClass;
@@ -175,20 +177,38 @@ public class TypeCheckerVisitor implements GJVisitor<String, SymbolTableEntry>
 
         //if variable, variableEntry returns an object, else its an int or int[] or boolean
         SymbolTableEntry variableEntry = methodEntry.get_tableEntry(ret);
-
-        String rt;
-
-        if (variableEntry != null) //if variable
-            rt = variableEntry.type;
-        else //else must be int or int[] or boolean
-            rt = ret;
-
-        if (!rt.equals(returnType))
+  
+        if (variableEntry == null) //variable name doesn't exist, so must be a type
         {
-            System.out.println("\nType Checking Error at Method Declaration");
-            System.out.println("The method's return type is of type '" + returnType + "'");
-            System.out.println("The method returned '" + rt + "'");
+            if (!ret.equals(returnType))
+            {
+                System.out.println("\nType Checking Error at Method Declaration");
+                System.out.println("The method's return type is of type '" + returnType + "'");
+                System.out.println("The method returned '" + ret + "'");
+            }
         }
+        else //variable name exists, so check its type
+        {
+            if (!variableEntry.equalsType(returnType))
+            {
+                System.out.println("\nType Checking Error at Expression List for Parameters");
+                System.out.println("The parameter is of type '" + variableEntry.type + "'");
+                System.out.println("The expression must be of type '" + variableEntry.type + "'");
+            }
+        }
+        // String rt;
+
+        // if (variableEntry != null) //if variable
+        //     rt = variableEntry.type;
+        // else //else must be int or int[] or boolean
+        //     rt = ret;
+
+        // if (!rt.equals(returnType))
+        // {
+        //     System.out.println("\nType Checking Error at Method Declaration");
+        //     System.out.println("The method's return type is of type '" + returnType + "'");
+        //     System.out.println("The method returned '" + rt + "'");
+        // }
 
         return "";
     }
@@ -305,38 +325,59 @@ public class TypeCheckerVisitor implements GJVisitor<String, SymbolTableEntry>
     * f3 -> ";"
     */
     @Override
-    public String visit(AssignmentStatement n, SymbolTableEntry methodEntry)
+    public String visit(AssignmentStatement n, SymbolTableEntry methodEntry) //7.6 (23)
     {
         String variableName = n.f0.accept(this, methodEntry); //* f0 -> Identifier()
         String equalsExpression = n.f2.accept(this, methodEntry); //* f2 -> Expression()
 
-        SymbolTableEntry entry;
-        String varType = "";
-        String exType = "";
+        SymbolTableEntry idEntry;
+        SymbolTableEntry exEntry;
+        // String varType = "";
+        // String exType = "";
 
-        entry = methodEntry.get_tableEntry(variableName);
+        idEntry = methodEntry.get_tableEntry(variableName);
 
-        if (entry == null) //variableName doesn't exist
+        if (idEntry == null) //variableName doesn't exist
         {
             System.out.println("\nType Checking Error at Assignment Statement");
             System.out.println("The variable '" + variableName + "' doesn't exist");
         }
-        else //variableName exists, get its type
-            varType = entry.type;
-
-        entry = methodEntry.get_tableEntry(equalsExpression);
-
-        if (entry == null) //equalsExpression doesn't exist, so must be a type
-            exType = equalsExpression;
-        else //equalsExpression exists, so check its type
-            exType = entry.type;
-
-        if (!varType.equals(exType))
+        else //variableName exists
         {
-            System.out.println("\nType Checking Error at Assignment Statement");
-            System.out.println("The variable '" + variableName + "' is of type '" + varType + "'");
-            System.out.println("The expression returns type '" + exType + "'");
+            exEntry = methodEntry.get_tableEntry(equalsExpression);
+
+            if (exEntry == null) //equalsExpression doesn't exist, so must be a type
+            {
+                if (!idEntry.type.equals(equalsExpression))
+                {
+                    System.out.println("\nType Checking Error at Assignment Statement");
+                    System.out.println("The variable '" + variableName + "' is of type '" + idEntry.type + "'");
+                    System.out.println("The expression returns type '" + equalsExpression + "'");
+                }
+            }
+            else //equalsExpression exists, so check its type
+            {
+                if (!exEntry.equalsType(idEntry.type))
+                {
+                    System.out.println("\nType Checking Error at Assignment Statement");
+                    System.out.println("The variable '" + variableName + "' is of type '" + idEntry.type + "'");
+                    System.out.println("The expression returns type '" + exEntry.type + "'");
+                }
+            }
         }
+        // entry = methodEntry.get_tableEntry(equalsExpression);
+
+        // if (entry == null) //equalsExpression doesn't exist, so must be a type
+        //     exType = equalsExpression;
+        // else //equalsExpression exists, so check its type
+        //     exType = entry.type;
+
+        // if (!varType.equals(exType))
+        // {
+        //     System.out.println("\nType Checking Error at Assignment Statement");
+        //     System.out.println("The variable '" + variableName + "' is of type '" + varType + "'");
+        //     System.out.println("The expression returns type '" + exType + "'");
+        // }
 
         return "";
     }

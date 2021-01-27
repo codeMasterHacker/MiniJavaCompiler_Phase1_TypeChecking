@@ -4,17 +4,33 @@ import java.util.*;
 public class ClassEntry extends SymbolTableEntry 
 {
     public boolean is_mainClass;
-    public String parent_className; //in case the class extends another class, inheritence
+    public String parentClass_name; //in case the class extends another class, inheritence
+
+    private SymbolTableEntry parentClass_entry; //points to the parent class, the class its extending from
 
     public ClassEntry(String className, String type, SymbolTableEntry parent_tableEntry, boolean is_mainClass, String parent_className)
     {
         super(className, type, parent_tableEntry);
 
         this.is_mainClass = is_mainClass;
-        this.parent_className = parent_className;
+        this.parentClass_name = parent_className;
+
+        if (!this.parentClass_name.isEmpty())
+            parentClass_entry = parent_tableEntry.get_tableEntry(this.parentClass_name);
         
         methods = new HashMap<>();
         fields = new HashMap<>();
+    }
+
+    @Override
+    public boolean equalsType(String type)
+    {
+        if (this.type.equals(type))
+            return true;
+        else if (parentClass_entry != null)
+            return parentClass_entry.equalsType(type);
+        else
+            return false;
     }
 
     //given a name, return the appropriate type of symbol table entry

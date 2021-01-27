@@ -56,17 +56,16 @@ public class MethodEntry extends SymbolTableEntry
     {
         //boolean flag = true;
         int i = 0;
-        int j = 0;
 
         ts = ts.trim();
         ArrayList<String> types = new ArrayList<>(Arrays.asList(ts.split(" ")));
 
-        while (j < types.size() && !types.isEmpty())
+        while (i < types.size() && !types.isEmpty())
         {
-            if (types.get(j).isEmpty())
+            if (types.get(i).isEmpty())
                 types.remove(i);
             else
-                j++;
+                i++;
         }
 
         // if (ts.isEmpty())
@@ -87,30 +86,45 @@ public class MethodEntry extends SymbolTableEntry
         //     System.out.println("Recieved: " + s);
         // }
 
-        String var;
+        //String var;
         SymbolTableEntry entry;
+        i = 0;
 
-        for (VariableEntry parameter : values)
+        for (VariableEntry parameter : values) //implement rule 7.7 (35)
         {
-            entry = argu.get_tableEntry(types.get(i));
-            
-            if (entry == null) //variable name doesn't exist, so must be a type
-                var = types.get(i);
-            else //variable name exists, so check its type
-                var = entry.type;
-
             // System.out.println("Recieved: " + types.get(i));
             // System.out.println("Conversion: " + var);
             // System.out.println("Actually: " + parameter.type);
 
-            if (!var.equals(parameter.type))
+            entry = argu.get_tableEntry(types.get(i));
+            
+            if (entry == null) //variable name doesn't exist, so must be a type
             {
-                System.out.println("\nType Checking Error at Expression List for Parameters");
-                System.out.println("The parameter is of type '" + var + "'");
-                System.out.println("The expression must be of type '" + parameter.type + "'");
+                //var = types.get(i);
 
-                return false;
-                //break;
+                if (!types.get(i).equals(parameter.type))
+                {
+                    System.out.println("\nType Checking Error at Expression List for Parameters");
+                    System.out.println("The parameter is of type '" + types.get(i) + "'");
+                    System.out.println("The expression must be of type '" + parameter.type + "'");
+
+                    return false;
+                    //break;
+                }
+            }
+            else //variable name exists, so check its type
+            {
+                //types.get(i) (entry) must be subtype of parameter.type
+
+                if (!entry.equalsType(parameter.type))
+                {
+                    System.out.println("\nType Checking Error at Expression List for Parameters");
+                    System.out.println("The parameter is of type '" + entry.type + "'");
+                    System.out.println("The expression must be of type '" + parameter.type + "'");
+
+                    return false;
+                    //break;
+                }
             }
 
             i++;

@@ -21,6 +21,11 @@ public class SymbolTableEntry
         this.parent_tableEntry = parent_tableEntry;
     }
 
+    public boolean equalsType(String type)
+    {
+        return true;
+    }
+
     public SymbolTableEntry get_tableEntry(String key)
     {
         return this;

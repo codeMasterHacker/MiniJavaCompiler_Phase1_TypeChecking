@@ -1,3 +1,3 @@
 javac TypeChecker.java
-java TypeChecker < /Users/Enrique/Desktop/JavaParser/phase1-tests/Basic.java
-find /Users/Enrique/Desktop/JavaParser -type f -name "*.class" -delete
+java TypeChecker < /Users/Enrique/MiniJavaCompiler_Phase1_TypeChecking/phase1-tests/Basic.java
+find /Users/Enrique/MiniJavaCompiler_Phase1_TypeChecking -type f -name "*.class" -delete
